@@ -11,58 +11,64 @@ struct ContentView: View {
     @StateObject var viewModel = ViewModel()
     @State var movieWritten = ""
     @State var movieQuery = ""
+    @State private var showingSheet = false
     
     var body: some View {
         ZStack {
-            Color.black.opacity(0.8)
             VStack {
                 HStack {
-                    TextField("  Pesquise seu filme", text: $movieWritten)
-                        .font(.system(size: 25))
-                        .frame(height: 50)
-                        .background(.gray)
-                    Button("🔍") {
-                        movieQuery = movieWritten
-                        movieQuery = movieQuery.replacingOccurrences(of: " ", with: "+")
-                        viewModel.fetch(nome: movieQuery)
+                    Image(systemName: "movieclapper")
+                        .padding(-8).foregroundColor(.button)
+                    Text("Movie.me")
+                }.font(.largeTitle).padding(.top, 20)
+                HStack {
+                    
+                    ZStack {
+                        TextField("  Pesquise seu filme", text: $movieWritten)
+                            .font(.system(size: 25))
+                            .frame(height: 50)
+                            .background(.findField)
+                        
+                        Button("🔍") {
+                            movieQuery = movieWritten
+                            movieQuery = movieQuery.replacingOccurrences(of: " ", with: "+")
+                            viewModel.fetch(nome: movieQuery)
+                        }.padding(.leading, 300)
                     }
-                    .foregroundColor(.gray)
                 }
-                .padding(.top, 120)
-                .padding(.bottom, -110)
                 .padding([.leading, .trailing], 20)
-                List {
-                    VStack {
-                        Color.blue
-                            .ignoresSafeArea()
-                        ForEach(viewModel.ranks, id: \.self) { r in
-                            HStack {
-                                Text(r.title)
-                                Spacer()
-                                AsyncImage(url: URL(string: r.poster)) { Image in
-                                    Image
-                                        .resizable()
-                                        .scaledToFit()
-                                        .frame(width: 100)
-                                } placeholder: {
-                                    Rectangle()
-                                        .frame(width: 100, height: 150)
-                                    
+                ScrollView {
+                    ZStack {
+                        Color.white
+                        VStack {
+                            ForEach(viewModel.ranks, id: \.self) { r in
+                                HStack {
+                                    Text(r.title).font(.subheadline).padding(.leading, 20)
+                                    Spacer()
+                                    AsyncImage(url: URL(string: r.poster)) { Image in
+                                        Image
+                                            .resizable()
+                                            .scaledToFit()
+                                            .frame(width: 100)
+                                            .padding()
+                                            
+                                            
+                                    } placeholder: {
+                                        Rectangle()
+                                            .frame(width: 500)
+                                        
+                                    }
                                 }
                             }
-                            //                        .background()
                         }
-                        .listRowBackground(Color.gray)
                     }
-                    .frame(height: 800)
-                    .ignoresSafeArea()
                 }
-                .padding(.top, 130)
-                .listStyle(.plain)
             }
         }
         .ignoresSafeArea()
-        .onAppear() {}
+        .onAppear() {
+            viewModel.fetch(nome: "Car")
+        }
     }
 }
 
